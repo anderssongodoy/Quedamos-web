@@ -37,9 +37,13 @@ export async function proxy(request: NextRequest) {
 }
 
 export const config = {
-  // Excluimos estáticos, _next y la propia página pública /p/[token]
-  // (esa va con anon-only y no necesita refresh de auth).
+  // El proxy NO debe correr sobre:
+  //   - estáticos / _next / imágenes
+  //   - /auth/* — el flujo PKCE guarda el code-verifier en una cookie; si el
+  //     proxy llama getUser() en /auth/callback puede pisar esa cookie antes de
+  //     que exchangeCodeForSession la lea → "PKCE code verifier not found".
+  //   - /api/* — los route handlers manejan su propia auth (cookies, secret, anon).
   matcher: [
-    '/((?!_next/static|_next/image|favicon.ico|.*\\.(?:png|jpg|jpeg|gif|webp|svg|ico)$).*)',
+    '/((?!_next/static|_next/image|favicon.ico|auth|api|.*\\.(?:png|jpg|jpeg|gif|webp|svg|ico)$).*)',
   ],
 }
