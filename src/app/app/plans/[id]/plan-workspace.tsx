@@ -84,6 +84,14 @@ export function PlanWorkspace(props: Props) {
     }
   }, [props.planId, router])
 
+  // Fallback de polling mientras se procesa: si Realtime no llega (publicación
+  // no configurada, RLS, conexión caída), igual salimos de la pantalla de carga.
+  useEffect(() => {
+    if (!isProcessing) return
+    const interval = setInterval(() => router.refresh(), 2500)
+    return () => clearInterval(interval)
+  }, [isProcessing, router])
+
   if (isProcessing) {
     return <ProcessingState job={job} planTitle={plan.title} />
   }
