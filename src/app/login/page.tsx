@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
+import { headers } from 'next/headers'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
@@ -9,17 +10,33 @@ import { PUBLIC_ENV } from '@/lib/env'
 
 export const metadata = { title: 'Entrar' }
 
+// El origen REAL desde el que se pidió el login — así el magic link siempre
+// apunta al sitio correcto (localhost en local, el dominio de Vercel en prod),
+// sin depender de NEXT_PUBLIC_APP_URL que se hornea en el build.
+async function currentOrigin(): Promise<string> {
+  const h = await headers()
+  const origin = h.get('origin')
+  if (origin) return origin
+  const host = h.get('x-forwarded-host') ?? h.get('host')
+  if (host) {
+    const proto = h.get('x-forwarded-proto') ?? (host.includes('localhost') ? 'http' : 'https')
+    return `${proto}://${host}`
+  }
+  return PUBLIC_ENV.APP_URL
+}
+
 async function sendMagicLink(formData: FormData) {
   'use server'
   const email = String(formData.get('email') ?? '').trim().toLowerCase()
   if (!email || !/.+@.+\..+/.test(email)) {
     redirect('/login?error=email_invalid')
   }
+  const origin = await currentOrigin()
   const supabase = await getSupabaseServer()
   const { error } = await supabase.auth.signInWithOtp({
     email,
     options: {
-      emailRedirectTo: `${PUBLIC_ENV.APP_URL}/auth/callback`,
+      emailRedirectTo: `${origin}/auth/callback`,
       shouldCreateUser: true,
     },
   })
