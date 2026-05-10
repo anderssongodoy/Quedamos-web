@@ -28,6 +28,21 @@ export default async function AppHomePage() {
     .order('created_at', { ascending: false })
     .limit(50)
 
+  // Para los planes que todavía no tienen título, el último job nos dice si
+  // sigue procesándose o si falló (y por eso quedó "vacío").
+  const pendingIds = (plans ?? []).filter((p) => p.status === 'draft' && !p.title).map((p) => p.id)
+  const jobStatusByPlan = new Map<string, string>()
+  if (pendingIds.length > 0) {
+    const { data: jobs } = await supabase
+      .from('processing_jobs')
+      .select('plan_id, status, created_at')
+      .in('plan_id', pendingIds)
+      .order('created_at', { ascending: false })
+    for (const j of jobs ?? []) {
+      if (!jobStatusByPlan.has(j.plan_id)) jobStatusByPlan.set(j.plan_id, j.status)
+    }
+  }
+
   const grouped = {
     voting: (plans ?? []).filter((p) => p.status === 'voting' || p.status === 'draft'),
     confirmed: (plans ?? []).filter((p) => p.status === 'confirmed'),
@@ -51,10 +66,25 @@ export default async function AppHomePage() {
         <EmptyState />
       ) : (
         <>
-          <Section title="Por confirmar" plans={grouped.voting} formatDate={formatDate} />
-          <Section title="Confirmados" plans={grouped.confirmed} formatDate={formatDate} />
+          <Section
+            title="Por confirmar"
+            plans={grouped.voting}
+            formatDate={formatDate}
+            jobStatusByPlan={jobStatusByPlan}
+          />
+          <Section
+            title="Confirmados"
+            plans={grouped.confirmed}
+            formatDate={formatDate}
+            jobStatusByPlan={jobStatusByPlan}
+          />
           {grouped.past.length > 0 && (
-            <Section title="Pasados" plans={grouped.past} formatDate={formatDate} />
+            <Section
+              title="Pasados"
+              plans={grouped.past}
+              formatDate={formatDate}
+              jobStatusByPlan={jobStatusByPlan}
+            />
           )}
         </>
       )}
@@ -99,10 +129,12 @@ function Section({
   title,
   plans,
   formatDate,
+  jobStatusByPlan,
 }: {
   title: string
   plans: PlanLite[]
   formatDate: (s: string | null) => string
+  jobStatusByPlan: Map<string, string>
 }) {
   if (plans.length === 0) return null
   return (
@@ -113,7 +145,10 @@ function Section({
       <div className="grid gap-3 sm:grid-cols-2">
         {plans.map((plan) => {
           const t = planLabel(plan.type as never)
-          const inProgress = plan.status === 'draft' && !plan.title
+          const incomplete = plan.status === 'draft' && !plan.title
+          const jobStatus = incomplete ? jobStatusByPlan.get(plan.id) : undefined
+          const failed = jobStatus === 'failed'
+          const inProgress = incomplete && !failed
           return (
             <Link key={plan.id} href={`/app/plans/${plan.id}`}>
               <Card className="hover:border-brand/40 transition-colors h-full">
@@ -123,16 +158,25 @@ function Section({
                       <span>{t.emoji}</span>
                       <span>{t.es}</span>
                     </div>
-                    <Badge variant={plan.status === 'confirmed' ? 'default' : 'secondary'}>
+                    <Badge
+                      variant={
+                        plan.status === 'confirmed'
+                          ? 'default'
+                          : failed
+                            ? 'destructive'
+                            : 'secondary'
+                      }
+                    >
                       {plan.status === 'voting' && 'Votando'}
-                      {plan.status === 'draft' && (inProgress ? 'Procesando…' : 'Borrador')}
+                      {plan.status === 'draft' &&
+                        (failed ? 'Error' : inProgress ? 'Procesando…' : 'Borrador')}
                       {plan.status === 'confirmed' && 'Confirmado'}
                       {plan.status === 'cancelled' && 'Cancelado'}
                       {plan.status === 'archived' && 'Pasado'}
                     </Badge>
                   </div>
                   <h3 className="font-[var(--font-display)] text-lg font-semibold leading-snug">
-                    {plan.title ?? 'Procesando captura…'}
+                    {plan.title ?? (failed ? 'No se pudo procesar' : 'Procesando captura…')}
                   </h3>
                   <div className="space-y-1 text-sm text-muted-foreground">
                     {plan.location_name && (

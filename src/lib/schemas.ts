@@ -29,18 +29,71 @@ export const participantStatusEnum = z.enum(['invited', 'maybe', 'going', 'not_g
 // =============================================================================
 // Salida estructurada que devuelve Claude para una captura/texto/link
 // =============================================================================
+// La salida de un LLM es ruidosa: a veces devuelve más ítems de la cuenta, un
+// título demasiado largo, un confidence fuera de rango o un type inválido. En
+// lugar de rechazar todo el JSON (lo que mata el job entero), saneamos cada
+// campo: recortamos, deduplicamos, descartamos basura y clampeamos.
+const asStringArray = (v: unknown): string[] =>
+  Array.isArray(v) ? v.filter((x): x is string => typeof x === 'string') : []
+
+const nullableTrimmed = (max: number) =>
+  z.preprocess((v) => {
+    if (typeof v !== 'string') return null
+    const t = v.trim()
+    return t.length === 0 ? null : t.slice(0, max)
+  }, z.string().nullable())
+
 export const aiExtractionSchema = z.object({
-  type: planTypeEnum,
-  title: z.string().min(1).max(120),
-  summary: z.string().max(500).nullable(),
-  location_name: z.string().max(200).nullable(),
-  address: z.string().max(300).nullable(),
-  date_candidates: z.array(z.string().regex(/^\d{4}-\d{2}-\d{2}$/)).max(5),
-  time_candidates: z.array(z.string().regex(/^\d{2}:\d{2}$/)).max(5),
-  requirements: z.array(z.string().max(200)).max(10),
-  warnings: z.array(z.string().max(200)).max(10),
-  source_confidence: z.number().min(0).max(1),
-  missing_fields: z.array(z.string().max(40)).max(10),
+  type: planTypeEnum.catch('unknown'),
+  title: z.preprocess((v) => {
+    const t = typeof v === 'string' ? v.trim().slice(0, 120) : ''
+    return t.length === 0 ? 'Plan sin título' : t
+  }, z.string()),
+  summary: nullableTrimmed(500),
+  location_name: nullableTrimmed(200),
+  address: nullableTrimmed(300),
+  date_candidates: z.preprocess(
+    (v) =>
+      Array.from(new Set(asStringArray(v).filter((s) => /^\d{4}-\d{2}-\d{2}$/.test(s)))).slice(0, 5),
+    z.array(z.string()),
+  ),
+  time_candidates: z.preprocess(
+    (v) =>
+      Array.from(new Set(asStringArray(v).filter((s) => /^\d{2}:\d{2}$/.test(s)))).slice(0, 5),
+    z.array(z.string()),
+  ),
+  requirements: z.preprocess(
+    (v) =>
+      asStringArray(v)
+        .map((s) => s.trim())
+        .filter((s) => s.length > 0)
+        .map((s) => s.slice(0, 200))
+        .slice(0, 10),
+    z.array(z.string()),
+  ),
+  warnings: z.preprocess(
+    (v) =>
+      asStringArray(v)
+        .map((s) => s.trim())
+        .filter((s) => s.length > 0)
+        .map((s) => s.slice(0, 200))
+        .slice(0, 10),
+    z.array(z.string()),
+  ),
+  source_confidence: z.preprocess((v) => {
+    const n = typeof v === 'number' ? v : Number(v)
+    if (!Number.isFinite(n)) return 0
+    return Math.min(1, Math.max(0, n))
+  }, z.number()),
+  missing_fields: z.preprocess(
+    (v) =>
+      asStringArray(v)
+        .map((s) => s.trim())
+        .filter((s) => s.length > 0)
+        .map((s) => s.slice(0, 40))
+        .slice(0, 10),
+    z.array(z.string()),
+  ),
 })
 export type AiExtraction = z.infer<typeof aiExtractionSchema>
 

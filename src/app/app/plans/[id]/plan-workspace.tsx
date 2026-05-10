@@ -45,8 +45,12 @@ export function PlanWorkspace(props: Props) {
   const votes = props.initialVotes
   const job = props.initialJob
 
+  // Un job `failed` no es "procesando" aunque el plan siga en draft sin título —
+  // si no, mostraríamos el spinner para siempre en vez del estado de error.
   const isProcessing =
-    job?.status === 'pending' || job?.status === 'processing' || (plan.status === 'draft' && !plan.title)
+    job?.status === 'pending' ||
+    job?.status === 'processing' ||
+    (job?.status !== 'failed' && plan.status === 'draft' && !plan.title)
 
   // Realtime: cualquier cambio relevante refresca la página (RSC fetchea de nuevo)
   useEffect(() => {
