@@ -15,7 +15,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
     .eq('id', userData.user.id)
     .maybeSingle()
 
-  const displayName = profile?.name ?? userData.user.email ?? 'Vos'
+  const displayName = profile?.name ?? userData.user.email ?? 'Tú'
   const initials = displayName
     .split(/\s+/)
     .slice(0, 2)

@@ -21,7 +21,7 @@ import {
   Share2,
 } from 'lucide-react'
 import { getSupabaseBrowser } from '@/lib/supabase/browser'
-import { planLabel, shortShareText } from '@/lib/plan-helpers'
+import { planLabel, planStatusLabel, participantStatusLabel, shortShareText } from '@/lib/plan-helpers'
 import type { Plan, PlanOption, PlanParticipant, PlanVote, ProcessingJob } from '@/lib/db-types'
 
 type Props = {
@@ -184,7 +184,7 @@ function FailedState({ message }: { message: string }) {
       </h1>
       <p className="text-sm text-muted-foreground">{message}</p>
       <p className="text-xs text-muted-foreground">
-        Probá con otra captura o pegá el texto directamente.
+        Prueba con otra captura o pega el texto directamente.
       </p>
     </div>
   )
@@ -203,8 +203,8 @@ function PlanHeader({ plan, publicUrl }: { plan: Plan; publicUrl: string | null 
             {confidence}% confianza IA
           </Badge>
         )}
-        <Badge variant={plan.status === 'confirmed' ? 'default' : 'secondary'} className="capitalize">
-          {plan.status}
+        <Badge variant={plan.status === 'confirmed' ? 'default' : 'secondary'}>
+          {planStatusLabel(plan.status)}
         </Badge>
       </div>
       <h1 className="font-[var(--font-display)] text-4xl font-semibold tracking-tight">
@@ -260,7 +260,7 @@ function WarningsCard({ warnings, missing }: { warnings: string[]; missing: stri
           ))}
           {missing.length > 0 && (
             <p className="text-amber-800/80">
-              Datos faltantes: {missing.join(', ')} — completalos abajo.
+              Datos faltantes: {missing.join(', ')} — complétalos abajo.
             </p>
           )}
         </div>
@@ -382,7 +382,7 @@ function PlanFields({ planId, plan }: { planId: string; plan: Plan }) {
             onChange={(e) => setStartsAt(e.target.value)}
           />
           <p className="text-xs text-muted-foreground">
-            Si la IA detectó mal el día u hora, corregilo acá. Cuando confirmes el plan
+            Si la IA detectó mal el día u hora, corrígelo aquí. Cuando confirmes el plan
             con una opción ganadora, este campo se actualiza solo.
           </p>
         </div>
@@ -484,7 +484,7 @@ function PlanOptionsEditor({
         label: null,
       }))
     if (newOptions.length === 0) {
-      toast.error('Agregá al menos una fecha')
+      toast.error('Agrega al menos una fecha')
       return
     }
     await persist([...options, ...newOptions])
@@ -499,7 +499,7 @@ function PlanOptionsEditor({
       <CardContent className="space-y-4">
         {options.length === 0 && draft.length === 0 && (
           <p className="text-sm text-muted-foreground">
-            Sin opciones todavía. Agregá fechas para que el grupo vote.
+            Sin opciones todavía. Agrega fechas para que el grupo vote.
           </p>
         )}
         {options.map((o) => {
@@ -600,17 +600,17 @@ function ParticipantsCard({
           <Badge variant="outline" className="bg-success/10 text-success border-success/30">
             ✓ Voy: {counts.going}
           </Badge>
-          <Badge variant="outline">~ Maybe: {counts.maybe}</Badge>
+          <Badge variant="outline">~ Quizá: {counts.maybe}</Badge>
           <Badge variant="outline">✗ No voy: {counts.not_going}</Badge>
           <Badge variant="outline" className="text-muted-foreground">
-            … invitados: {counts.invited}
+            … Invitados: {counts.invited}
           </Badge>
         </div>
         <ul className="space-y-1 text-sm">
           {participants.map((p) => (
             <li key={p.id} className="flex items-center justify-between rounded-md px-2 py-1 hover:bg-muted/40">
-              <span>{p.guest_name ?? (p.user_id ? 'Vos / cuenta' : 'invitado')}</span>
-              <span className="text-xs text-muted-foreground">{p.status}</span>
+              <span>{p.guest_name ?? (p.user_id ? 'Tú' : 'Invitado')}</span>
+              <span className="text-xs text-muted-foreground">{participantStatusLabel(p.status)}</span>
             </li>
           ))}
         </ul>
@@ -663,7 +663,7 @@ function ConfirmCard({
 
   async function confirm() {
     if (!selected) {
-      toast.error('Elegí una opción ganadora')
+      toast.error('Elige una opción ganadora')
       return
     }
     setConfirming(true)
@@ -694,7 +694,7 @@ function ConfirmCard({
       </CardHeader>
       <CardContent className="space-y-3">
         <p className="text-sm text-muted-foreground">
-          Elegí la opción ganadora. El plan pasa a confirmado y los votos se cierran.
+          Elige la opción ganadora. El plan pasa a confirmado y los votos se cierran.
         </p>
         <div className="space-y-2">
           {options.map((o) => {

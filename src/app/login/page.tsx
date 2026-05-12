@@ -57,18 +57,18 @@ export default async function LoginPage({
       <Card className="w-full max-w-sm border-border/60 shadow-sm">
         <CardHeader>
           <CardTitle className="font-[var(--font-display)] text-2xl tracking-tight">
-            Entrá a <span className="text-brand">Quedamos</span>
+            Entra a <span className="text-brand">Quedamos</span>
           </CardTitle>
           <CardDescription>
-            Te mandamos un link mágico al correo. Sin contraseñas.
+            Te enviamos un link mágico al correo. Sin contraseñas.
           </CardDescription>
         </CardHeader>
         <CardContent>
           {params.sent ? (
             <div className="space-y-3 text-sm">
-              <p className="font-medium">Revisá tu correo ✉️</p>
+              <p className="font-medium">Revisa tu correo ✉️</p>
               <p className="text-muted-foreground">
-                Mandamos el link a <strong>{params.sent}</strong>. Hacé click para entrar
+                Enviamos el link a <strong>{params.sent}</strong>. Haz clic para entrar
                 (puede tardar un minuto).
               </p>
               <Link
@@ -88,19 +88,19 @@ export default async function LoginPage({
                   type="email"
                   required
                   autoComplete="email"
-                  placeholder="vos@ejemplo.com"
+                  placeholder="tu@ejemplo.com"
                 />
               </div>
               {params.error && (
                 <p className="text-sm text-destructive">
-                  {params.error === 'email_invalid' ? 'Ingresá un correo válido.' : params.error}
+                  {params.error === 'email_invalid' ? 'Ingresa un correo válido.' : params.error}
                 </p>
               )}
               <Button type="submit" size="lg" className="btn-brand w-full">
-                Mandame el link
+                Enviarme el link
               </Button>
               <p className="text-xs text-muted-foreground">
-                Al entrar aceptás que coordinemos planes sociales — nada de pagos ni datos
+                Al entrar aceptas que coordinemos planes sociales — nada de pagos ni datos
                 sensibles.
               </p>
             </form>

@@ -22,6 +22,29 @@ export function planLabel(type: Plan['type']): { es: string; emoji: string } {
   return PLAN_TYPE_LABEL[type ?? 'unknown']
 }
 
+export const PLAN_STATUS_LABEL: Record<string, string> = {
+  draft: 'Borrador',
+  voting: 'Votando',
+  confirmed: 'Confirmado',
+  cancelled: 'Cancelado',
+  archived: 'Pasado',
+}
+
+export const PARTICIPANT_STATUS_LABEL: Record<string, string> = {
+  invited: 'Invitado',
+  maybe: 'Quizá',
+  going: 'Voy',
+  not_going: 'No voy',
+}
+
+export function planStatusLabel(status: string): string {
+  return PLAN_STATUS_LABEL[status] ?? status
+}
+
+export function participantStatusLabel(status: string): string {
+  return PARTICIPANT_STATUS_LABEL[status] ?? status
+}
+
 export function shortShareText(plan: Pick<Plan, 'title' | 'location_name' | 'starts_at'>): string {
   const parts = [plan.title ?? 'Plan'].filter(Boolean) as string[]
   if (plan.location_name) parts.push(`📍 ${plan.location_name}`)

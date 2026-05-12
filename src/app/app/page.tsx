@@ -58,7 +58,7 @@ export default async function AppHomePage() {
           Tus planes
         </h1>
         <p className="text-muted-foreground">
-          Subí una captura, pegá un link o escribí lo que viste — yo armo la ficha.
+          Sube una captura, pega un link o escribe lo que viste — yo armo la ficha.
         </p>
       </header>
 
@@ -101,7 +101,7 @@ function EmptyState() {
         </span>
         <h2 className="font-[var(--font-display)] text-2xl font-semibold">Tu primer plan</h2>
         <p className="max-w-md text-sm text-muted-foreground">
-          Mandanos una captura del lugar o evento que viste, o pegá el link. La IA
+          Envíanos una captura del lugar o evento que viste, o pega el link. La IA
           arma la ficha en segundos y te queda lista para compartir.
         </p>
         <Link href="/app/new" className="pt-2">

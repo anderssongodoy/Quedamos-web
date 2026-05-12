@@ -111,7 +111,7 @@ function ImageInput({
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Subí la captura</CardTitle>
+        <CardTitle>Sube la captura</CardTitle>
         <CardDescription>
           JPG, PNG, WebP o HEIC · hasta 8 MB · sin metadata EXIF (la borramos automáticamente).
         </CardDescription>
@@ -134,7 +134,7 @@ function ImageInput({
               <span className="grid size-12 place-items-center rounded-xl bg-brand-soft text-brand">
                 <Camera className="size-5" />
               </span>
-              <p className="text-sm font-medium">Tocá para elegir o arrastrá una captura</p>
+              <p className="text-sm font-medium">Toca para elegir o arrastra una captura</p>
               <p className="text-xs text-muted-foreground">JPG · PNG · WebP · HEIC</p>
             </>
           )}
@@ -175,7 +175,7 @@ function LinkInput({
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Pegá el link</CardTitle>
+        <CardTitle>Pega el link</CardTitle>
         <CardDescription>
           De Instagram, TikTok, Google Maps, una página de evento, lo que sea.
         </CardDescription>
@@ -219,7 +219,7 @@ function TextInput({
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Pegá el texto</CardTitle>
+        <CardTitle>Pega el texto</CardTitle>
         <CardDescription>
           Mensaje del grupo, descripción del evento, lo que tengas.
         </CardDescription>

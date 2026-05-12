@@ -68,7 +68,7 @@ function Hero() {
           <span className="text-brand">a plan en segundos.</span>
         </h1>
         <p className="mt-7 max-w-2xl text-lg leading-7 text-muted-foreground sm:text-xl">
-          Subí una captura, pegá un link o copiá un mensaje. Quedamos lo convierte en
+          Sube una captura, pega un link o copia un mensaje. Quedamos lo convierte en
           una ficha clara para votar, confirmar y recordar — sin perseguir a nadie en
           el grupo.
         </p>
@@ -149,7 +149,7 @@ function DemoShowcase() {
                   <span className="text-muted-foreground">🗓️</span> Sáb 16 May · 20:00
                 </p>
                 <p className="flex items-center gap-2">
-                  <span className="text-muted-foreground">👥</span> 4 confirmados · 1 maybe
+                  <span className="text-muted-foreground">👥</span> 4 confirmados · 1 quizá
                 </p>
               </div>
               <div className="flex gap-2 pt-2">
@@ -157,7 +157,7 @@ function DemoShowcase() {
                   Voy
                 </Button>
                 <Button size="sm" variant="outline" className="flex-1">
-                  Maybe
+                  Quizá
                 </Button>
                 <Button size="sm" variant="ghost">
                   No voy
@@ -177,10 +177,10 @@ function DemoShowcase() {
 // ---------------------------------------------------------------------------
 function HowItWorks() {
   const steps = [
-    { icon: Camera, title: 'Subí la captura', body: 'O pegá un link, o copiá un mensaje. Lo que ya hacés en el grupo.' },
+    { icon: Camera, title: 'Sube la captura', body: 'O pega un link, o copia un mensaje. Lo que ya haces en el grupo.' },
     { icon: Sparkles, title: 'Quedamos la entiende', body: 'Detecta lugar, fecha, hora y arma una ficha editable en segundos.' },
-    { icon: Share2, title: 'Compartí el link', body: 'Mandalo al grupo. Tus amigos abren la página — sin instalar nada.' },
-    { icon: Vote, title: 'Todos votan y confirmás', body: 'La gente vota fecha y hora, vos cerrás el plan. Listo.' },
+    { icon: Share2, title: 'Comparte el link', body: 'Mándalo al grupo. Tus amigos abren la página — sin instalar nada.' },
+    { icon: Vote, title: 'Todos votan y confirmas', body: 'La gente vota fecha y hora, tú cierras el plan. Listo.' },
   ]
   return (
     <section id="como-funciona" className="mx-auto max-w-6xl px-6 py-24">
@@ -285,7 +285,7 @@ function ClosingCta() {
     <section className="mx-auto max-w-5xl px-6 py-24">
       <div className="rounded-3xl border border-brand/30 bg-brand-soft/40 p-10 text-center sm:p-16">
         <h2 className="font-[var(--font-display)] text-4xl font-semibold tracking-tight sm:text-5xl">
-          Empezá a organizar planes
+          Empieza a organizar planes
           <br />
           sin perseguir a nadie.
         </h2>

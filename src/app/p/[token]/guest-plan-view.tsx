@@ -276,7 +276,7 @@ function JoinCard({
           </Button>
         </form>
         <p className="mt-3 text-xs text-muted-foreground">
-          No necesitás cuenta. Tu nombre solo lo ven los del grupo.
+          No necesitas cuenta. Tu nombre solo lo ven los del grupo.
         </p>
       </CardContent>
     </Card>
@@ -342,7 +342,7 @@ function RsvpCard({
                 : 'border-border bg-card hover:border-brand/40',
             ].join(' ')}
           >
-            ~ Maybe
+            ~ Quizá
           </button>
           <button
             onClick={() => set('not_going')}
@@ -398,7 +398,7 @@ function VoteCard({
     return (
       <Card>
         <CardContent className="p-5 text-sm text-muted-foreground">
-          Todavía no hay opciones. Esperá a que el organizador las agregue.
+          Todavía no hay opciones. Espera a que el organizador las agregue.
         </CardContent>
       </Card>
     )
@@ -407,7 +407,7 @@ function VoteCard({
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="text-base">Votá fecha y hora</CardTitle>
+        <CardTitle className="text-base">Vota fecha y hora</CardTitle>
       </CardHeader>
       <CardContent className="space-y-2">
         {options.map((o) => {
@@ -539,7 +539,7 @@ function CommentsCard({
           <Textarea
             value={text}
             onChange={(e) => setText(e.target.value)}
-            placeholder="Escribí algo…"
+            placeholder="Escribe algo…"
             rows={2}
             maxLength={2000}
           />
